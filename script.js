@@ -2,6 +2,8 @@ const express=require('express');
 const path=require('path')
 const port=8000;
 
+const db=require('./config/mongoose')
+const Contact = require('./models/contact')
 const app=express();
 // app.get('/',function(req,res){
 //     res.send('<h1>heeeee it is running</h1>');
@@ -32,15 +34,15 @@ app.use(express.static('assets'));
 
 const contactList=[
     {
-        name:"Shreya",
+        name:"person1",
         phone:"11111111"
     },
     {
-        name:"Deepak",
+        name:"person2",
         phone:"888888888"
     },
     {
-        name:"suraj",
+        name:"person3",
         phone:"990090"
     }
 ]
@@ -65,8 +67,39 @@ app.post('/create-contact',function(req,res){
     //     name:req.body.name,
     //     phone:req.body.phone
     // });
-    contactList.push(req.body);
-    return res.redirect('back')
+
+    // contactList.push(req.body);
+    // return res.redirect('back')
+
+    //now using database
+    Contact.create({
+        name:req.body.name,
+        phone:req.body.phone
+    })
+    // },function(err,newContact){
+    //     if(err){
+    //         console.log('error in creating a contact');
+    //         return res.redirect('back');
+    //     }
+    //     console.log('*******', newContact);
+    //     return res.redirect('back');
+    // });
+        return res.redirect('back');
+
+});
+// app.get('/deleteContact/:phone',function(req,res){
+//     console.log(req.params);
+//     let phone=req.params.phone;
+// })
+app.get('/deleteContact/', function(req, res){
+    let phone=req.query.phone;
+    let contactIndex=contactList.findIndex(contact=> contact.phone==phone);
+    if(contactIndex!=-1){
+        contactList.splice(contactIndex,1)
+    }
+    console.log(contactIndex);
+    console.log(req.query.name);
+    return res.redirect('back');
 })
 
 app.listen(port,function(err){
