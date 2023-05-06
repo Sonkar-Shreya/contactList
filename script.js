@@ -49,10 +49,14 @@ const contactList=[
 
 console.log('dirname is',__dirname);
 
-app.get('/',function(req,res){
+app.get('/',async function(req,res){
+
+    const contacts= await Contact.find({})
+    // console.log("print contacts",contacts);
+
     return res.render('home',{
         title:"contactList",
-        contact_list:contactList
+        contact_list:contacts
     });
 })
 app.get('/practice',function(req,res){
@@ -91,16 +95,25 @@ app.post('/create-contact',function(req,res){
 //     console.log(req.params);
 //     let phone=req.params.phone;
 // })
-app.get('/deleteContact/', function(req, res){
-    let phone=req.query.phone;
-    let contactIndex=contactList.findIndex(contact=> contact.phone==phone);
-    if(contactIndex!=-1){
-        contactList.splice(contactIndex,1)
-    }
-    console.log(contactIndex);
-    console.log(req.query.name);
+
+
+app.get('/delete-contact',async function(req, res){
+    // let phone=req.query.name;
+    // let contactIndex=Contact.findIndex(function(contact,index){
+    //     if(contact.phone==phone) return index;
+    // });
+    // if(contactIndex!=-1){
+    //     contactList.splice(contactIndex,1)
+    // }
+    // console.log("index",contactIndex);
+
+    let id=req.query.id;
+    // console.log('id:',id);
+    await Contact.findByIdAndDelete(id)
     return res.redirect('back');
+    
 })
+
 
 app.listen(port,function(err){
     if(err){
